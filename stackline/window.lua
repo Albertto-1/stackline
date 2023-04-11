@@ -81,6 +81,7 @@ function Window:makeStackId(hsWin) -- {{{
 end -- }}}
 
 function Window:deleteIndicator() -- {{{
+    log.d('deleteIndicator for', self.id)
     if self.indicator then
         self.indicator:delete()
         self.indicator.canvas = nil -- TODO: Update stack_spec so that stack:resetAllIndicators() passes *without* this kludge
@@ -95,6 +96,7 @@ function Window:setOtherAppWindows(byApp) -- {{{
 end -- }}}
 
 function Window:unfocusOtherAppWindows() -- {{{
+    log.i('unfocusOtherAppWindows for', self.id)
     u.each(self.otherAppWindows, function(w)
         w.indicator:redraw()
     end)

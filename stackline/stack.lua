@@ -1,5 +1,3 @@
-local u = require 'stackline.lib.utils'
-
 local Stack = {}
 
 function Stack:new(stackedWindows) -- {{{
@@ -12,7 +10,7 @@ function Stack:new(stackedWindows) -- {{{
     return stack
 end -- }}}
 
-function  Stack:get() -- {{{
+function Stack:get() -- {{{
     return self.windows
 end -- }}}
 
@@ -23,9 +21,9 @@ function Stack:getHs() -- {{{
 end -- }}}
 
 function Stack:frame() -- {{{
-   -- All stacked windows have the same dimensions, 
+   -- All stacked windows have the same dimensions,
    -- so the 1st Hs window's frame is ~= to the stack's frame
-   -- TODO: Incorrect when the 1st window has min-size < stack width. See ./query.lua:104
+   -- TODO: Incorrect when the 1st window has min-size < stack width. See ./query.lua:105
    return self.windows[1]._win:frame()
 end -- }}}
 
@@ -86,9 +84,28 @@ function Stack:getWindowByPoint(point) -- {{{
        return point:inside(wFrame)
    end)
 
-   if #foundWin > 0 then
-       return foundWin[1]
+      -- Get the screen with frame that contains point 'p'
+      local function findClickedScreen(_p) -- {{{
+         return table.unpack(
+            u.filter(hs.screen.allScreens(), function(s)
+               return _p:inside(s:frame())
+            end)
+         )
+      end -- }}}
+
+      local clickedScren = findClickedScreen(p)
+      p = clickedScren
+         and clickedScren:absoluteToLocal(p)
+         or p
    end
+
+   return table.unpack(
+         u.filter(self.windows, function(w)
+          local indicatorFrame = w.indicator and w.indicator:canvasElements()[1].frame
+          if not indicatorFrame then return false end
+          return p:inside(indicatorFrame) -- NOTE: frame *must* be a hs.geometry.rect instance
+      end)
+   )
 end
 
 

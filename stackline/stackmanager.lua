@@ -1,7 +1,8 @@
-local Query = require 'stackline.stackline.query'
-local Stack = require 'stackline.stackline.stack'
+local log   = hs.logger.new('stackmanager', 'info')
 
 local Stackmanager = {}
+
+Stackmanager.query = require 'stackline.stackline.query'
 
 function Stackmanager:init() -- {{{
     self.stacks = {}
@@ -125,6 +126,11 @@ function Stackmanager:getClickedWindow(point) -- {{{
             return clickedWindow
         end
     end
+end -- }}}
+
+function Stackmanager:setLogLevel(lvl) -- {{{
+    log.setLogLevel(lvl)
+    log.i( ('Window.log level set to %s'):format(lvl) )
 end -- }}}
 
 return Stackmanager
